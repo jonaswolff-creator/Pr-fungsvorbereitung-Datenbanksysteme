@@ -1,0 +1,49 @@
+Lösung Aufgabe 7:
+-- @block einfaches Select Statement
+SELECT country_name FROM hr.country;
+-- @block aktuelle Uhrzeit
+SELECT NOW(), DATE_FORMAT(NOW(), '%H:%i') FROM DUAL;
+
+-- @block DISTINCT
+SELECT DISTINCT manager_id FROM hr.employee WHERE manager_id IS NOT NULL;
+
+-- @block String Operationen
+SELECT 
+    street_address AS Adresse,
+    IFNULL(
+           CONCAT(country_id, ' - ', postal_code, ' ', city, ' (', state_province, ')'),
+           'unbekannt'
+           ) AS Stadt
+FROM hr.location;
+
+-- @block Filtern
+SELECT *
+FROM hr.employee
+WHERE manager_id IS NULL;
+
+-- @block Filtern nach mehreren Kriterien
+SELECT * 
+FROM hr.job
+WHERE min_salary > 2000 AND LOWER(job_id) like '%clerk%';
+
+-- @block Subqueries
+SELECT * 
+FROM hr.employee 
+WHERE employee_id IN (
+    SELECT DISTINCT manager_id FROM hr.employee WHERE manager_id IS NOT NULL
+    );
+
+-- @block komplexes SQL Statement
+SELECT 
+    CONCAT(first_name, ' ', last_name) AS Name,
+    REPLACE(LOWER(email),'@example.com', '@...') AS EMail,
+    SUBSTR(phone_number,5) AS Telefon,
+    CONCAT(DATE_FORMAT(hire_date, '%d.%m.%Y'), ' (', ROUND(DATEDIFF(STR_TO_DATE('01.01.2023','%d.%m.%Y'), hire_date) / 365, 1),' Jahre)') AS Einstellungsdatum,
+    CONCAT(ROUND(salary/1000,0), 'k€') AS Gehalt, 
+    NVL(manager_id,'niemand') AS Vorgesetzter
+FROM hr.employee
+WHERE 
+    salary > 10000 AND 
+    hire_date < STR_TO_DATE('1996-01-01', '%Y-%m-%d') AND 
+    employee_id IN (SELECT DISTINCT manager_id FROM hr.employee WHERE manager_id IS NOT NULL)
+    ;

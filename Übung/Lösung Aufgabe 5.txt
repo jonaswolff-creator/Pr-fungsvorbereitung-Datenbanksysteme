@@ -1,0 +1,103 @@
+Lösung Aufgabe 5
+DROP DATABASE IF EXISTS hr;
+CREATE DATABASE hr;
+USE hr;
+
+/* *************************************************************** 
+***************************CREATING TABLES************************
+**************************************************************** */
+CREATE TABLE region (
+	region_id INT NOT NULL,
+	region_name VARCHAR(25),
+	PRIMARY KEY (region_id)
+);
+
+CREATE TABLE country (
+	country_id CHAR(2) NOT NULL,
+	country_name VARCHAR(40),
+	region_id INT NOT NULL,
+	PRIMARY KEY (country_id),
+	FOREIGN KEY (region_id) REFERENCES region(region_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+
+CREATE TABLE location (
+	location_id INT NOT NULL AUTO_INCREMENT,
+	street_address VARCHAR(40),
+	postal_code VARCHAR(12),
+	city VARCHAR(30) NOT NULL,
+	state_province VARCHAR(25),
+	country_id CHAR(2) NOT NULL,
+	PRIMARY KEY (location_id),
+	FOREIGN KEY (country_id) REFERENCES country(country_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT AtLeastOneDigitInStreetAddress CHECK (street_address RLIKE '[0-9]')
+);
+
+CREATE TABLE department (
+	department_id INT NOT NULL,
+	department_name VARCHAR(30) NOT NULL,
+	location_id INT,
+	PRIMARY KEY (department_id),
+	FOREIGN KEY (location_id) REFERENCES location(location_id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE job (
+	job_id VARCHAR(10) NOT NULL,
+	job_title VARCHAR(35) NOT NULL,
+	min_salary DECIMAL(8, 0),
+	max_salary DECIMAL(8, 0),
+	PRIMARY KEY (job_id),
+	CONSTRAINT MinSalaryPositive CHECK (min_salary > 0),
+	CONSTRAINT MaxSalaryGreaterThanMinSalary CHECK (max_salary >= min_salary)
+);
+
+CREATE TABLE employee (
+	employee_id INT NOT NULL,
+	first_name VARCHAR(20),
+	last_name VARCHAR(25) NOT NULL,
+	email VARCHAR(25) NOT NULL,
+	phone_number VARCHAR(20),
+	hire_date DATE NOT NULL,
+	job_id VARCHAR(10) NOT NULL,
+	salary DECIMAL(8, 2) NOT NULL,
+	commission_pct DECIMAL(2, 2),
+	manager_id INT,
+	department_id INT,
+	PRIMARY KEY (employee_id),
+	FOREIGN KEY (job_id) REFERENCES job(job_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	FOREIGN KEY (department_id) REFERENCES department(department_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	FOREIGN KEY (manager_id) REFERENCES employee(employee_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT SalaryPositive CHECK (salary > 0),
+	CONSTRAINT CommissionPctPositive CHECK (commission_pct > 0),
+	CONSTRAINT EMailPattern CHECK (email RLIKE '^[a-zA-Z][a-zA-Z0-9]*@[a-zA-Z]+\.[a-z]{2,4}$')
+);
+
+CREATE TABLE job_history (
+	employee_id INT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL,
+	job_id VARCHAR(10) NOT NULL,
+	department_id INT NOT NULL,
+	PRIMARY KEY (employee_id, start_date),
+	FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (job_id) REFERENCES job(job_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (department_id) REFERENCES department(department_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT EndDateAfterStartDate CHECK (end_date > start_date)
+);
+
+CREATE TABLE project (
+	project_id INT NOT NULL,
+	project_name VARCHAR(50),
+	PRIMARY KEY (project_id)
+);
+
+CREATE TABLE employee2project (
+	employee_id INT NOT NULL,
+	project_id INT NOT NULL,
+	assoc_pct DECIMAL(3, 2),
+	is_project_lead BOOL,
+	PRIMARY KEY (project_id, employee_id),
+	FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (project_id) REFERENCES project(project_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT AssocPctRange CHECK (assoc_pct > 0 AND assoc_pct <= 1)
+);

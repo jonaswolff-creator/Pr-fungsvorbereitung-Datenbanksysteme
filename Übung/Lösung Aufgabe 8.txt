@@ -1,0 +1,71 @@
+Lösung Aufgabe 8:
+-- @block Telefonbuch
+SELECT 
+    last_name,
+    first_name,
+    phone_number
+FROM hr.employee
+ORDER BY last_name ASC, first_name ASC;
+
+-- @block Telefonbuch zur Rückwärtssuche
+SELECT 
+    phone_number,
+    last_name,
+    first_name
+FROM hr.employee
+ORDER BY phone_number ASC;
+
+-- @block Anzahl neuer Mitarbeiter nach Einstellungsjahr
+SELECT
+    DATE_FORMAT(hire_date, '%Y') AS Einstellungsjahr,
+    COUNT(employee_id) AS Mitarbeiterzahl
+FROM hr.employee
+GROUP BY Einstellungsjahr
+
+-- @block Standorte pro Land
+SELECT 
+    location.country_id AS Ländercode,
+    COUNT(location.location_id) AS Standortanzahl
+FROM hr.location
+GROUP BY location.country_id
+ORDER BY Standortanzahl DESC;
+
+-- @block Abteilungsdetails
+SELECT 
+    region.region_name,
+    country.country_name,
+    location.state_province,
+    CONCAT(location.postal_code, ' ', location.city, ' ', location.street_address) AS Adresse,
+    department_name
+FROM hr.department 
+    JOIN hr.location ON department.location_id = location.location_id
+    JOIN hr.country ON location.country_id = country.country_id
+    JOIN hr.region ON country.region_id = region.region_id
+;
+
+
+-- @block Zuordnung von Mitarbeitern zu Projekten
+SELECT
+    project.project_name,
+    employee.first_name,
+    employee.last_name,
+    employee2project.assoc_pct
+FROM
+    hr.project
+    INNER JOIN hr.employee2project ON project.project_id = employee2project.project_id
+    INNER JOIN hr.employee ON employee.employee_id = employee2project.employee_id
+;
+
+-- @block Überlastete Mitarbeiter
+SELECT
+    employee.last_name AS Nachname,
+    employee.first_name AS Vorname,
+    SUM(employee2project.assoc_pct) AS Gesamtauslastung,
+    GROUP_CONCAT(project.project_name SEPARATOR ', ') AS Projekte
+FROM
+    hr.project
+    INNER JOIN hr.employee2project ON project.project_id = employee2project.project_id
+    INNER JOIN hr.employee ON employee.employee_id = employee2project.employee_id
+GROUP BY employee.first_name, employee.last_name 
+HAVING Gesamtauslastung > 1
+;

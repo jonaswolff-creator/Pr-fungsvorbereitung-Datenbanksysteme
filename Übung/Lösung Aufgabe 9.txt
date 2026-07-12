@@ -1,0 +1,50 @@
+Lösung Aufgabe 9:
+-- @block Prämienberechtigte Personen:
+-- 3 Mitarbeiter mit Firmenjubiläum und dem niedrigsten Gehalt
+(SELECT 
+	employee_id,
+	first_name,
+	last_name,
+	hire_date,
+	job_id,
+	salary
+FROM hr.employee WHERE DATE_FORMAT(employee.hire_date, '%Y') <= 1996 ORDER BY salary ASC LIMIT 3)
+UNION
+-- 3 Mitarbeiter mit dem insgesamt niedrigsten Gehalt
+(SELECT 
+	employee_id,
+	first_name,
+	last_name,
+	hire_date,
+	job_id,
+	salary
+FROM hr.employee ORDER BY salary ASC LIMIT 3)
+ORDER BY salary ASC;
+
+-- @block employee_details View
+CREATE OR REPLACE VIEW employee_details AS
+SELECT employee_id,
+	job_id,
+	manager_id,
+	department_id,
+	location_id,
+	country_id,
+	first_name,
+	last_name,
+	salary,
+	commission_pct,
+	department_name,
+	job_title,
+	city,
+	state_province,
+	country_name,
+	region_name
+FROM hr.employee 
+JOIN hr.department USING(department_id)
+JOIN hr.job USING(job_id)
+JOIN hr.location USING(location_id)
+JOIN hr.country USING(country_id)
+JOIN hr.region USING(region_id)
+
+-- @block Lesender Zugriff auf employee_details View:
+SELECT * FROM employee_details;
