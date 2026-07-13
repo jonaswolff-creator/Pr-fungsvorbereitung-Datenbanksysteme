@@ -18,7 +18,7 @@
 \usepackage[hidelinks]{hyperref}
 
 % ---------- Kompakt-Layout ----------
-\renewcommand{\normalsize}{\fontsize{5.7}{6.4}\selectfont}
+\renewcommand{\normalsize}{\fontsize{5.85}{6.6}\selectfont}
 \normalsize
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.8pt}
@@ -39,7 +39,7 @@
 \titlespacing{\section}{0pt}{3pt}{1pt}
 \titleformat{\subsection}{\bfseries\fontsize{7}{8}\selectfont}{}{0pt}{}
 \titlespacing{\subsection}{0pt}{2pt}{0.5pt}
-\titleformat{\subsubsection}{\bfseries\itshape\fontsize{5.7}{6.4}\selectfont}{}{0pt}{}
+\titleformat{\subsubsection}{\bfseries\itshape\fontsize{5.85}{6.6}\selectfont}{}{0pt}{}
 \titlespacing{\subsubsection}{0pt}{1.5pt}{0.5pt}
 
 % ---------- L\"osungs-Umgebung (kompakt, ohne Box/Rahmen-Overhead) ----------
@@ -51,7 +51,7 @@
 \lstdefinestyle{sqlstyle}{
     language=SQL,
     backgroundcolor=\color{codehg},
-    basicstyle=\ttfamily\fontsize{5.0}{5.6}\selectfont,
+    basicstyle=\ttfamily\fontsize{5.15}{5.7}\selectfont,
     keywordstyle=\bfseries\color{sqlkw},
     stringstyle=\color{sqlstr},
     commentstyle=\itshape\color{sqlcom},
@@ -100,18 +100,14 @@
 \section*{Aufgabe 1 \quad Entity Relationship Modell}
 \Kopf{Aufgabe 1 Entity Relationship Modell}
 
-Im Rahmen dieser \"Ubung soll ein ER-Modell f\"ur die Personalabteilung eines fiktiven, international aufgestellten Konzerns erstellt werden (Vorbereitung mit der Software \emph{Dia}, Werkzeugpalette ``ER'').
-
-\subsection*{1.2 \quad Regionen, L\"ander, Standorte und Abteilungen}
-
-\subsubsection*{1.2.1 Modellierung}
-Erstellen Sie ein ER-Modell zur Abbildung globaler Regionen, L\"ander, Firmenstandorte und den an den jeweiligen Standorten angesiedelten Abteilungen des Konzerns. Regionen haben eine eindeutige ID sowie einen Namen und fassen L\"ander zusammen. Jedes Land hat ebenfalls eine eindeutige ID sowie einen Namen und ist einer Region zugeordnet. In jedem Land kann es mehrere Firmenstandorte geben. Jeder Standort ist durch eine eindeutige ID identifizierbar und hat Adressinformationen wie Bundesland, Stadt, PLZ, Stra\ss{}e. Abteilungen sind wiederum jeweils einem Standort zugeordnet, durch eine ID identifiziert und haben einen Namen.
+\subsection*{1.2 \& 1.3 \quad Region/Land/Standort/Abteilung/Mitarbeiter}
+Region(ID,Name) $\to$\,1:n\,$\to$ Land(ID,Name) $\to$\,1:n\,$\to$ Standort(ID,Stra\ss{}e,PLZ,Stadt,Bundesland) $\to$\,1:n\,$\to$ Abteilung(ID,Name) $\to$\,1:n\,$\to$ Mitarbeiter(ID,Vorname,Nachname,E-Mail,Telefonnummer,Einstelldatum,Gehalt,Provisionssatz). Mitarbeiter hat rekursive 1:n-Beziehung ``ist Vorgesetzter von'' auf sich selbst.
 
 \begin{loesung}
-Legende der verwendeten Chen-Notation: Rechteck = Entit\"atstyp, Raute = Beziehungstyp, Ellipse = Attribut (unterstrichen = Schl\"usselattribut, gestrichelt = abgeleitetes Attribut), Zahlen an den Kanten = Kardinalit\"at (1 bzw. n) aus Sicht des jeweils anderen Entit\"atstyps. Diese Legende gilt f\"ur alle ER-Diagramme in Aufgabe 1.
+Chen-Notation: Rechteck=Entit\"at, Raute=Beziehung, Ellipse=Attribut (unterstr.=Schl\"ussel, gestrichelt=abgeleitet), Zahlen=Kardinalit\"at.
 
 \begin{center}
-\resizebox{0.65\linewidth}{!}{%
+\resizebox{0.72\linewidth}{!}{%
 \begin{tikzpicture}[node distance=1.5cm and 4.0cm]
 
 \node[entity] (region) {Region};
@@ -165,38 +161,6 @@ Legende der verwendeten Chen-Notation: Rechteck = Entit\"atstyp, Raute = Beziehu
 \kard{location}{mid3}{1}
 \kard{dept}{mid3}{n}
 
-\end{tikzpicture}}
-\end{center}
-\end{loesung}
-
-\subsubsection*{1.2.2 Diskussion}
-\begin{itemize}
-\item Wie m\"usste das Modell angepasst werden, wenn Abteilungen \"uber verschiedene Standorte verteilt sein k\"onnen?
-\item Wie m\"usste das Modell angepasst werden, wenn statt einer expliziten Einteilung in Regionen und L\"ander eine beliebige geographische Struktur (z.\,B. Region $\to$ Land $\to$ Bundesland $\to$ Regierungsbezirk $\to$ Landkreis $\to$ Stadt) abgebildet werden k\"onnen soll?
-\end{itemize}
-
-\begin{loesung}
-\textbf{Abteilungen \"uber mehrere Standorte:} Aus der bisherigen 1:n-Beziehung ``ist angesiedelt in'' m\"usste eine n:m-Beziehung zwischen \emph{Standort} und \emph{Abteilung} werden (Kardinalit\"at auf beiden Seiten ``n''). Da m:n-Beziehungen im relationalen Modell eine eigene Relation ben\"otigen, w\"urde sp\"ater eine zus\"atzliche Verbindungstabelle \texttt{abteilung\_standort(abteilung\_id, standort\_id)} entstehen. Optional k\"onnte diese Beziehung noch um ein Attribut erg\"anzt werden (z.\,B. Anzahl der dort besch\"aftigten Mitarbeiter je Standort), was ohne eigene Relation gar nicht abbildbar w\"are.
-
-\textbf{Beliebig tiefe geographische Hierarchie:} Eine feste, endliche Kette von Entit\"atstypen (Region $\to$ Land $\to$ Bundesland $\to \dots$) kann keine \emph{beliebig} tiefe bzw.\ unterschiedlich tiefe Hierarchie abbilden (nicht jedes Land hat z.\,B. Regierungsbezirke). Die Standardl\"osung ist die Einf\"uhrung eines einzigen, generischen Entit\"atstyps ``Geografische Einheit'' (Attribute: ID, Name, Typ/Ebene) mit einer \emph{rekursiven} 1:n-Beziehung ``ist Teil von'' auf sich selbst (analog zur sp\"ater eingef\"uhrten Vorgesetzten-Beziehung bei Mitarbeitern). Damit l\"asst sich eine beliebig tiefe, auch pro Land unterschiedlich tiefe Baumstruktur abbilden, ohne das Schema \"andern zu m\"ussen, falls neue Hierarchieebenen hinzukommen.
-\end{loesung}
-
-\subsection*{1.3 \quad Mitarbeiter}
-Erweitern Sie das ER-Modell um den Entit\"atstyp Mitarbeiter. Jeder Mitarbeiter ist einer Abteilung zugeordnet und durch eine eindeutige ID identifizierbar. Weitere Eigenschaften eines Mitarbeiters sind Vorname, Nachname, E-Mail, Telefonnummer, Einstelldatum, Gehalt und Provisionssatz. Jeder Mitarbeiter hat einen Vorgesetzten, der wiederum selbst Mitarbeiter ist. Jeder Vorgesetzte hat im Allgemeinen mehrere Mitarbeiter.
-
-\begin{loesung}
-Der neue Entit\"atstyp \emph{Mitarbeiter} wird \"uber die Beziehung ``geh\"ort zu'' (1:n, ein Mitarbeiter geh\"ort zu genau einer Abteilung, eine Abteilung hat n Mitarbeiter) an \emph{Abteilung} angebunden. Die Vorgesetzten-Beziehung ist eine \emph{rekursive} 1:n-Beziehung auf dem Entit\"atstyp \emph{Mitarbeiter} selbst: aus Sicht der Rolle ``Vorgesetzter'' hat ein Mitarbeiter die Kardinalit\"at 1, aus Sicht der Rolle ``unterstellter Mitarbeiter'' die Kardinalit\"at n.
-
-\begin{center}
-\resizebox{0.65\linewidth}{!}{%
-\begin{tikzpicture}[node distance=1.5cm and 4.4cm]
-
-\node[entity] (dept) {Abteilung};
-\node[attr, above=of dept, xshift=-0.9cm] (d-id) {\pk{ID}};
-\node[attr, above=of dept, xshift=0.9cm] (d-name) {Name};
-\draw[kante] (dept) -- (d-id);
-\draw[kante] (dept) -- (d-name);
-
 \node[entity, right=of dept] (emp) {Mitarbeiter};
 \node[attr, above=of emp, xshift=-2.85cm] (e-id) {\pk{ID}};
 \node[attr, above=of emp, xshift=-0.95cm] (e-vor) {Vorname};
@@ -225,92 +189,14 @@ Der neue Entit\"atstyp \emph{Mitarbeiter} wird \"uber die Beziehung ``geh\"ort z
 \end{center}
 \end{loesung}
 
-\subsection*{1.4 \quad Projekte}
-Erweitern Sie das ER-Modell um die M\"oglichkeit, Projekte abzubilden. Jedes Projekt ist durch eine eindeutige ID identifizierbar und hat einen Namen. In jedem Projekt k\"onnen mehrere Mitarbeiter zu jeweils unterschiedlichen zeitlichen Anteilen mitarbeiten. Mitarbeiter sollen in mehreren Projekten gleichzeitig mitarbeiten k\"onnen und entweder die Projektleitung \"ubernehmen oder als ``normaler'' Mitarbeiter am Projekt mitwirken.
-
-\subsection*{1.5 \quad Jobs}
-Erweitern Sie das ER-Modell um die Abbildung von Jobs (=Jobprofile). Jeder Job ist durch eine eindeutige ID identifizierbar und hat einen Titel. Jedem Mitarbeiter ist ein Job zugeordnet. Ein Job kann mehreren Mitarbeitern zugeordnet werden. Basierend auf den Geh\"altern der Mitarbeiter, die im jeweiligen Job arbeiten, soll jedem Job ein Mindest- und Maximalgehalt zugeordnet werden.
-
-\begin{loesung}[ (1.4 \& 1.5)]
-\textbf{Projekte:} Da ein Mitarbeiter gleichzeitig an mehreren Projekten mitarbeiten kann \emph{und} ein Projekt mehrere Mitarbeiter hat, handelt es sich um eine \textbf{n:m-Beziehung} ``arbeitet mit''. Der zeitliche Anteil (\texttt{Anteil}) sowie das Merkmal, ob der Mitarbeiter die Projektleitung \"ubernimmt (\texttt{Projektleitung}), sind Eigenschaften \emph{des Zusammenwirkens} von Mitarbeiter und Projekt und werden daher direkt an die Beziehung selbst gehe\-ftet (in Chen-Notation d\"urfen n:m-Beziehungen eigene Attribute tragen).
-
-\textbf{Jobs:} Zwischen \emph{Job} und \emph{Mitarbeiter} besteht die 1:n-Beziehung ``ist angestellt als'' (ein Job wird von n Mitarbeitern ausge\"ubt, ein Mitarbeiter \"ubt zu einem Zeitpunkt genau einen Job aus). \texttt{Mindestgehalt} und \texttt{Maximalgehalt} sind \emph{abgeleitete Attribute} des Entit\"atstyps \emph{Job} (gestrichelt dargestellt), da sie sich aus den Geh\"altern der zugeordneten Mitarbeiter berechnen lassen und nicht redundanzfrei durch den Anwender gepflegt werden m\"ussen.
-
-\begin{center}
-\resizebox{0.65\linewidth}{!}{%
-\begin{tikzpicture}[node distance=1.7cm and 4.4cm]
-
-\node[entity] (dept) {Abteilung};
-\node[entity, right=of dept] (emp) {Mitarbeiter};
-\node[attr, above=of emp, xshift=-2.4cm] (e-id) {\pk{ID}};
-\node[attr, above=of emp, xshift=0cm] (e-name) {Vor-/Nachname};
-\node[attr, above=of emp, xshift=2.6cm] (e-kontakt) {E-Mail/Telefon};
-\node[attr, below=of emp, xshift=-1.9cm] (e-dat) {Einstelldatum};
-\node[attr, below=of emp, xshift=0cm] (e-geh) {Gehalt};
-\node[attr, below=of emp, xshift=1.9cm] (e-prov) {Provisionssatz};
-\foreach \a in {e-id,e-name,e-kontakt,e-dat,e-geh,e-prov}{\draw[kante] (emp) -- (\a);}
-
-\coordinate (midE) at ($(dept)!0.5!(emp)$);
-\node[rel] at (midE) {geh\"ort zu};
-\draw[kante] (dept) -- (midE);
-\draw[kante] (midE) -- (emp);
-\kard{dept}{midE}{1}
-\kard{emp}{midE}{n}
-
-\node[rel, above=3.6cm of emp] (reportsto) {ist Vorge-\\setzter von};
-\draw[kante] (emp.north) to[out=110,in=-90] (reportsto.south west);
-\draw[kante] (reportsto.south east) to[out=-90,in=70] (emp.north);
-\node[kardlabel] at ($(emp.north)+(-0.55,1.1)$) {1};
-\node[kardlabel] at ($(emp.north)+(0.75,0.6)$) {n};
-
-\node[entity, right=of emp] (proj) {Projekt};
-\node[attr, above=of proj, xshift=-0.75cm] (p-id) {\pk{ID}};
-\node[attr, above=of proj, xshift=0.75cm] (p-name) {Name};
-\draw[kante] (proj) -- (p-id);
-\draw[kante] (proj) -- (p-name);
-
-\coordinate (midP) at ($(emp)!0.5!(proj)$);
-\node[rel] at (midP) {arbeitet mit};
-\node[attr, below=1.3cm of midP, xshift=-1.0cm] (rp-anteil) {Anteil};
-\node[attr, below=1.3cm of midP, xshift=1.1cm] (rp-lead) {Projektleitung};
-\draw[kante] (midP) -- (rp-anteil);
-\draw[kante] (midP) -- (rp-lead);
-\draw[kante] (emp) -- (midP);
-\draw[kante] (midP) -- (proj);
-\kard{emp}{midP}{m}
-\kard{proj}{midP}{n}
-
-\node[entity, below=3.4cm of dept] (job) {Job};
-\node[attr, left=of job] (j-id) {\pk{ID}};
-\node[attr, below=of job, xshift=-1.0cm] (j-titel) {Titel};
-\node[attrd, below=of job, xshift=1.0cm] (j-min) {Mindest-\\gehalt};
-\node[attrd, right=of job] (j-max) {Maximal-\\gehalt};
-\draw[kante] (job) -- (j-id);
-\draw[kante] (job) -- (j-titel);
-\draw[kante] (job) -- (j-min);
-\draw[kante] (job) -- (j-max);
-
-\coordinate (midJ) at ($(job)!0.5!(emp)$);
-\node[rel] at (midJ) {ist ange-\\stellt als};
-\draw[kante] (job) -- (midJ);
-\draw[kante] (midJ) -- (emp);
-\kard{job}{midJ}{1}
-\kard{emp}{midJ}{n}
-
-\end{tikzpicture}}
-\end{center}
-\end{loesung}
-
-\subsection*{1.6 \quad Besch\"aftigungsverlauf}
-In der Datenbank soll f\"ur jeden Mitarbeiter der jeweilige Besch\"aftigungsverlauf abgespeichert werden k\"onnen. Dazu soll der Job und die Abteilung, in der dieser Job ausgef\"uhrt wurde, zusammen mit Start- und Enddatum gespeichert werden. Das Startdatum soll zusammen mit der ID des Mitarbeiters die Eindeutigkeit der Eintr\"age sicherstellen. Zu ber\"ucksichtigen sind: ein Mitarbeiter kann einen Job in mehreren Abteilungen ausgef\"uhrt haben, ein Mitarbeiter kann in einer Abteilung mehrere Jobs ausgef\"uhrt haben, in einer Abteilung kann ein Job von mehreren Mitarbeitern ausgef\"uhrt werden.
+\subsection*{1.4--1.6 \quad Projekte, Jobs, Besch\"aftigungsverlauf}
+Projekt(ID,Name) steht in \textbf{n:m}-Beziehung ``arbeitet mit'' zu Mitarbeiter (Beziehungsattribute: Anteil, Projektleitung -- n:m-Beziehungen d\"urfen eigene Attribute tragen). Job(ID,Titel,Mindestgehalt*,Maximalgehalt* [*abgeleitet]) steht in 1:n-Beziehung ``ist angestellt als'' zu Mitarbeiter. Besch\"aftigungsverlauf (Start\_Datum,End\_Datum) ist eigener \emph{schwacher} Entit\"atstyp mit je einer 1:n-Beziehung zu Mitarbeiter/Abteilung/Job (da keine Paarkombination die Eintr\"age eindeutig identifiziert; PK sp\"ater: Mitarbeiter-ID+Start\_Datum).
 
 \begin{loesung}
-Da sich ein Besch\"aftigungsabschnitt gleichzeitig auf \emph{drei} Entit\"atstypen bezieht (Mitarbeiter, Abteilung, Job) und keine der paarweisen Kombinationen (Mitarbeiter/Job, Mitarbeiter/Abteilung, Job/Abteilung) die Eintr\"age eindeutig identifiziert, wird \emph{Besch\"aftigungsverlauf} als eigener (schwacher) Entit\"atstyp mit drei 1:n-Beziehungen zu Mitarbeiter, Abteilung und Job modelliert (``war Kandidat f\"ur'', ``wurde ausge\"ubt in'', ``wurde ausge\"ubt als''). Die Eigenschaften \texttt{Start\_Datum} und \texttt{End\_Datum} geh\"oren zum Besch\"aftigungsverlauf; die Existenz eines Eintrags h\"angt von allen drei Fremdbeziehungen ab, daher die doppelte Umrandung (schwacher Entit\"atstyp).
-
-Dies ist das \textbf{vollst\"andige ER-Modell}, das in Aufgabe 2 als Ausgangsbasis f\"ur die \"Uberf\"uhrung in das relationale Modell dient. Die einzelnen Attribute der bereits bekannten Entit\"atstypen sind hier zur besseren \"Ubersicht ausgeblendet (siehe Diagramme zu 1.2--1.5); nur die neu eingef\"uhrten Attribute des Besch\"aftigungsverlaufs sind dargestellt.
+Vollst\"andiges ER-Modell (Basis f\"ur Aufgabe 2). Attribute von Region/Land/Standort/Abteilung/Mitarbeiter siehe Diagramm oben.
 
 \begin{center}
-\resizebox{0.65\linewidth}{!}{%
+\resizebox{0.72\linewidth}{!}{%
 \begin{tikzpicture}[node distance=1.8cm and 4.2cm]
 
 \node[entity] (region) {Region};
@@ -319,6 +205,10 @@ Dies ist das \textbf{vollst\"andige ER-Modell}, das in Aufgabe 2 als Ausgangsbas
 \node[entity, right=of location] (dept) {Abteilung};
 \node[entity, right=of dept] (emp) {Mitarbeiter};
 \node[entity, right=of emp] (proj) {Projekt};
+\node[attr, above=of proj, xshift=-0.75cm] (p-id) {\pk{ID}};
+\node[attr, above=of proj, xshift=0.75cm] (p-name) {Name};
+\draw[kante] (proj) -- (p-id);
+\draw[kante] (proj) -- (p-name);
 
 \coordinate (m1) at ($(region)!0.5!(country)$); \node[rel] at (m1) {ist Teil von};
 \draw[kante] (region) -- (m1); \draw[kante] (m1) -- (country);
@@ -345,8 +235,20 @@ Dies ist das \textbf{vollst\"andige ER-Modell}, das in Aufgabe 2 als Ausgangsbas
 \coordinate (m5) at ($(emp)!0.5!(proj)$); \node[rel] at (m5) {arbeitet mit};
 \draw[kante] (emp) -- (m5); \draw[kante] (m5) -- (proj);
 \kard{emp}{m5}{m} \kard{proj}{m5}{n}
+\node[attr, below=1.3cm of m5, xshift=-1.0cm] (rp-anteil) {Anteil};
+\node[attr, below=1.3cm of m5, xshift=1.1cm] (rp-lead) {Projektleitung};
+\draw[kante] (m5) -- (rp-anteil);
+\draw[kante] (m5) -- (rp-lead);
 
 \node[entity, below right=3.4cm and 2.1cm of dept] (job) {Job};
+\node[attr, left=of job] (j-id) {\pk{ID}};
+\node[attr, below=of job, xshift=-1.0cm] (j-titel) {Titel};
+\node[attrd, below=of job, xshift=1.0cm] (j-min) {Mindest-\\gehalt};
+\node[attrd, right=of job] (j-max) {Maximal-\\gehalt};
+\draw[kante] (job) -- (j-id);
+\draw[kante] (job) -- (j-titel);
+\draw[kante] (job) -- (j-min);
+\draw[kante] (job) -- (j-max);
 \coordinate (m6) at ($(job)!0.5!(emp)$); \node[rel] at (m6) {ist ange-\\stellt als};
 \draw[kante] (job) -- (m6); \draw[kante] (m6) -- (emp);
 \kard{job}{m6}{1} \kard{emp}{m6}{n}
@@ -507,80 +409,34 @@ Gegeben sei das folgende relationale Modell zur Verwaltung der offenen Rechnunge
 \end{center}
 
 \subsubsection*{3.1.1 \quad 2. Normalform}
-Erl\"autern Sie, warum nur Relationen mit mehrwertigen (zusammengesetzten) Schl\"usselkandidaten die 2.\,NF verletzen k\"onnen.
-
+Warum k\"onnen nur Relationen mit zusammengesetzten Schl\"usseln die 2.\,NF verletzen?
 \begin{loesung}
-Die 2.\,NF verlangt, dass jedes Nicht-Schl\"usselattribut \emph{voll} funktional (und nicht nur partiell) von \emph{jedem} Schl\"usselkandidaten abh\"angt. Eine partielle Abh\"angigkeit setzt per Definition voraus, dass ein Nicht-Schl\"usselattribut bereits von einer \emph{echten Teilmenge} eines Schl\"usselkandidaten bestimmt wird. Besteht ein Schl\"usselkandidat jedoch nur aus einem einzigen Attribut, besitzt er \"uberhaupt keine nichttriviale echte Teilmenge (au\ss{}er der leeren Menge, die per Konvention nichts funktional bestimmen kann) -- eine partielle Abh\"angigkeit ist damit strukturell unm\"oglich. Erst wenn ein Schl\"usselkandidat aus \emph{mehreren} Attributen besteht, kann ein Nicht-Schl\"usselattribut von einer echten (nichtleeren) Teilmenge dieses zusammengesetzten Schl\"ussels abh\"angen, ohne von allen Schl\"usselattributen abzuh\"angen -- nur dann ist eine 2.\,NF-Verletzung \"uberhaupt m\"oglich.
+2.\,NF verletzt = ein Nicht-Schl\"usselattribut h\"angt nur von einer \emph{echten Teilmenge} des Schl\"ussels ab (partielle Abh\"angigkeit). Ein einwertiger Schl\"ussel hat keine nichttriviale echte Teilmenge $\Rightarrow$ partielle Abh\"angigkeit strukturell unm\"oglich. Erst bei zusammengesetztem Schl\"ussel kann ein Attribut von einem Teil davon abh\"angen.
 \end{loesung}
 
-\subsection*{3.2 \quad funktionale Abh\"angigkeiten}
-Geben Sie f\"ur das gegebene relationale Modell alle funktionalen Abh\"angigkeiten an.
-
+\subsection*{3.2 \quad Funktionale Abh\"angigkeiten}
 \begin{loesung}
-Der (einzige) Schl\"usselkandidat der Relation ist \texttt{RNr} (jede Rechnungsnummer kommt in den Beispieldaten genau einmal vor). Es ergeben sich folgende funktionalen Abh\"angigkeiten:
-\begin{align*}
-\text{RNr} &\to \text{KDNr, Pos, Datum, Betrag} & \text{(Schl\"ussel} \to \text{alle \"ubrigen Attribute)}\\
-\text{KDNr} &\to \text{Name, Wohnort} & \text{(Kundennummer bestimmt Name und Wohnort)}
-\end{align*}
-Aus RNr $\to$ KDNr und KDNr $\to$ Name, Wohnort folgt transitiv: RNr $\to$ Name, Wohnort.
+Schl\"ussel: \texttt{RNr}. FDs: RNr$\to$KDNr,Pos,Datum,Betrag; KDNr$\to$Name,Wohnort. Transitiv: RNr$\to$Name,Wohnort.
 \end{loesung}
 
 \subsection*{3.3 \quad 3. Normalform}
-Erl\"autern Sie, inwiefern das gegebene relationale Modell nicht der 3.\,NF entspricht. Zeigen Sie beispielhaft, welche Anomalien auftreten k\"onnen. \"Uberf\"uhren Sie das Modell in die dritte Normalform.
-
 \begin{loesung}
-\textbf{Verletzung:} Die Attribute \texttt{Name} und \texttt{Wohnort} h\"angen nicht direkt vom Schl\"ussel \texttt{RNr} ab, sondern nur \emph{transitiv} \"uber das Nicht-Schl\"usselattribut \texttt{KDNr} (RNr $\to$ KDNr $\to$ Name, Wohnort). Damit liegt eine transitive Abh\"angigkeit eines Nicht-Schl\"usselattributs von einem anderen Nicht-Schl\"usselattribut vor -- ein klassischer Versto\ss{} gegen die 3.\,NF.
-
-\textbf{Anomalien (am Beispiel):}
-\begin{itemize}
-\item \emph{\"Anderungsanomalie:} Zieht Herr M\"uller (KDNr 1) um, muss sein Wohnort in \emph{beiden} Zeilen (RNr 1 und 2) ge\"andert werden -- vergisst man eine Zeile, entsteht ein inkonsistenter Datenbestand.
-\item \emph{Einf\"ugeanomalie:} Ein neuer Kunde kann nicht gespeichert werden, solange er noch keine Rechnung hat, da Name/Wohnort nur \"uber eine Rechnungszeile erfasst werden.
-\item \emph{L\"oschanomalie:} L\"oscht man die einzige Rechnung eines Kunden (z.\,B. RNr 5 f\"ur Meier/Augsburg), gehen dessen Stammdaten (Name, Wohnort) vollst\"andig und unwiederbringlich verloren.
-\end{itemize}
-
-\textbf{\"Uberf\"uhrung in die 3.\,NF} durch Auslagerung der transitiv abh\"angigen Attribute in eine eigene Relation:
-\begin{itemize}
-\item \texttt{Kunde(\pk{KDNr}, Name, Wohnort)}
-\item \texttt{Rechnung(\pk{RNr}, KDNr, Pos, Datum, Betrag)} mit \texttt{KDNr} $\to$ \texttt{Kunde.KDNr}
-\end{itemize}
+\textbf{Versto\ss{}:} Name/Wohnort h\"angen nur transitiv via KDNr vom Schl\"ussel RNr ab. \textbf{Anomalien:} \"Anderung (Umzug $\Rightarrow$ mehrere Zeilen \"andern), Einf\"ugen (Kunde ohne Rechnung nicht speicherbar), L\"oschen (letzte Rechnung l\"oschen $\Rightarrow$ Kundendaten weg). \textbf{3.\,NF:} \texttt{Kunde(\pk{KDNr},Name,Wohnort)}, \texttt{Rechnung(\pk{RNr},KDNr,Pos,Datum,Betrag)} mit KDNr$\to$Kunde.KDNr.
 \end{loesung}
 
 \subsection*{3.4 \quad Boyce-Codd Normalform}
-Erl\"autern Sie, ob das in die 3.\,NF \"uberf\"uhrte relationale Modell der Boyce-Codd-Normalform entspricht, und bringen Sie das Modell ggf.\ in die BCNF.
-
 \begin{loesung}
-Die BCNF verlangt, dass f\"ur \emph{jede} nichttriviale funktionale Abh\"angigkeit $X \to Y$ die linke Seite $X$ ein Superschl\"ussel ist. In \texttt{Kunde(KDNr, Name, Wohnort)} ist \texttt{KDNr} $\to$ \texttt{Name, Wohnort} die einzige nichttriviale FD, und \texttt{KDNr} ist bereits Schl\"ussel $\Rightarrow$ BCNF erf\"ullt. In \texttt{Rechnung(RNr, KDNr, Pos, Datum, Betrag)} ist \texttt{RNr} $\to$ \texttt{KDNr, Pos, Datum, Betrag} die einzige nichttriviale FD, und \texttt{RNr} ist Schl\"ussel $\Rightarrow$ ebenfalls BCNF erf\"ullt (unter der plausiblen Annahme, dass \texttt{KDNr} nicht umgekehrt \texttt{RNr} bestimmt, da ein Kunde mehrere Rechnungen haben kann). \textbf{Die Zerlegung aus 3.3 ist somit bereits in BCNF}, eine weitere Zerlegung ist nicht n\"otig.
+Beide Relationen: einziger Determinant ist jeweils der (einwertige) Schl\"ussel selbst $\Rightarrow$ \textbf{Zerlegung aus 3.3 ist bereits BCNF}, keine weitere n\"otig.
 \end{loesung}
 
-\subsection*{3.5 \quad Normalform des Hochschul-Schemas}
-Bestimmen Sie, in welcher Normalform das Hochschul-Schema (Dozent, Vorlesung, Kapitel, Studierende, h\"ort, Raumbelegung, Pr\"ufung, schreibt) vorliegt. Begr\"unden Sie Ihre Antwort.
-
+\subsection*{3.5 \quad Normalform Hochschul-Schema}
 \begin{loesung}
-Eine relationenweise Analyse (Prim\"arschl\"ussel jeweils unterstrichen laut ER-Diagramm):
-
-\begin{itemize}
-\item \texttt{Dozent(\pk{Personalnummer}, Name, Telefonnummer, E-Mail)}, \texttt{Studierende(\pk{Matrikelnummer}, Name, Studiengang)}, \texttt{Vorlesung(\pk{Modulnummer}, Name, Personalnummer)}: jeweils \textbf{einwertiger} Schl\"ussel $\Rightarrow$ 2.\,NF automatisch erf\"ullt (siehe 3.1.1); keine weiteren Nicht-Schl\"usselattribute h\"angen voneinander ab $\Rightarrow$ auch 3.\,NF/BCNF erf\"ullt.
-\item \texttt{Kapitel(\pk{Modulnummer}, \pk{\"Uberschrift}, Inhalt)}: zusammengesetzter Schl\"ussel; \texttt{Inhalt} h\"angt von \emph{beiden} Teilen ab (derselbe Kapiteltitel hat in unterschiedlichen Modulen unterschiedlichen Inhalt) $\Rightarrow$ keine partielle Abh\"angigkeit, 2.\,NF erf\"ullt; da nur ein Nicht-Schl\"usselattribut existiert, ist auch keine transitive Abh\"angigkeit m\"oglich $\Rightarrow$ 3.\,NF/BCNF erf\"ullt.
-\item \texttt{h\"ort(\pk{Matrikelnummer}, \pk{Modulnummer}, \pk{Semester})}: besteht nur aus Schl\"usselattributen, es gibt keine Nicht-Schl\"usselattribute $\Rightarrow$ trivial in BCNF (keine FD kann verletzt werden).
-\item \texttt{Raumbelegung(\pk{Raumnummer}, \pk{Wochentag}, \pk{Uhrzeit}, \pk{Semester}, Modulnummer)}: das einzige Nicht-Schl\"usselattribut \texttt{Modulnummer} h\"angt von der \emph{vollst\"andigen} Schl\"usselkombination ab (welches Modul in einem bestimmten Raum an einem Wochentag/einer Uhrzeit in einem Semester stattfindet) -- keine der vier Teilmengen bestimmt \texttt{Modulnummer} allein $\Rightarrow$ 2.\,NF erf\"ullt; nur ein Nicht-Schl\"usselattribut $\Rightarrow$ keine Transitivit\"at m\"oglich $\Rightarrow$ 3.\,NF/BCNF erf\"ullt.
-\item \texttt{Pr\"ufung(\pk{ID}, Aufsicht, Zeitpunkt, Raum, Semester)}: einwertiger Schl\"ussel $\Rightarrow$ analog zu Dozent/Studierende in BCNF.
-\item \texttt{schreibt(\pk{Modulnummer}, \pk{Pr\"ufungsID}, \pk{Matrikelnummer}, Note)}: dass \texttt{Modulnummer} trotz eindeutiger \texttt{Pr\"ufungsID} explizit Teil des Schl\"ussels ist, deutet darauf hin, dass eine Pr\"ufung (z.\,B.\ eine gemeinsame Klausur) mehrere Module gleichzeitig abpr\"ufen kann; \texttt{Note} h\"angt dann von der vollst\"andigen Kombination aus Modul, Pr\"ufung \emph{und} Studierendem ab $\Rightarrow$ keine partielle, mangels weiterer Nicht-Schl\"usselattribute auch keine transitive Abh\"angigkeit $\Rightarrow$ BCNF erf\"ullt.
-\end{itemize}
-
-\textbf{Ergebnis:} Unter den (realistischen) Annahmen, dass keine der oben genannten Attributkombinationen noch durch eine echte Teilmenge des jeweiligen Schl\"ussels bestimmt wird, befindet sich das \textbf{gesamte Hochschul-Schema in der Boyce-Codd-Normalform (BCNF)}.
+Dozent/Studierende/Vorlesung: einwertiger Schl\"ussel $\Rightarrow$ BCNF. Kapitel(\pk{Modulnr},\pk{\"Uberschrift},Inhalt): Inhalt h\"angt von beiden Teilen ab $\Rightarrow$ BCNF. h\"ort: nur Schl\"usselattribute $\Rightarrow$ trivial BCNF. Raumbelegung(\pk{Raum},\pk{Tag},\pk{Zeit},\pk{Semester},Modulnr): Modulnr h\"angt vom vollst\"andigen Schl\"ussel ab $\Rightarrow$ BCNF. Pr\"ufung: einwertig $\Rightarrow$ BCNF. schreibt(\pk{Modulnr},\pk{Pr\"ufungsID},\pk{Matrikelnr},Note): Note h\"angt von voller Kombination ab $\Rightarrow$ BCNF. \textbf{Ergebnis: gesamtes Schema in BCNF.}
 \end{loesung}
 
-\subsection*{3.6 \quad Normalform des HR-Schemas}
-Bestimmen Sie, in welcher Normalform das HR-Schema vorliegt. Begr\"unden Sie Ihre Antwort.
-
+\subsection*{3.6 \quad Normalform HR-Schema}
 \begin{loesung}
-Alle neun Relationen des in Aufgabe 2.4 hergeleiteten HR-Schemas besitzen entweder einen einwertigen Prim\"arschl\"ussel (\texttt{region, country, location, department, job, employee, project}) oder einen zusammengesetzten Schl\"ussel, bei dem die Nicht-Schl\"usselattribute nachweislich von der \emph{vollst\"andigen} Schl\"usselkombination abh\"angen (\texttt{job\_history}: Job und Abteilung eines Besch\"aftigungsabschnitts h\"angen vom Mitarbeiter \emph{und} vom Startdatum ab, nicht von einem der beiden Teile allein; \texttt{employee2project}: \texttt{assoc\_pct}/\texttt{is\_project\_lead} h\"angen von der konkreten Mitarbeiter-Projekt-Kombination ab). Es liegen keine weiteren funktionalen Abh\"angigkeiten vor, deren linke Seite kein Superschl\"ussel w\"are. \textbf{Das HR-Schema befindet sich damit -- wie in Aufgabe 2 hergeleitet -- in der BCNF.}
-
-Zwei h\"aufig diskutierte Sonderf\"alle sollten dabei aber angesprochen werden:
-\begin{enumerate}
-\item \textbf{\texttt{location.postal\_code}:} In vielen L\"andern legt die Postleitzahl Stadt und ggf.\ Bundesland eindeutig fest (\texttt{postal\_code} $\to$ \texttt{city, state\_province}), was wegen \texttt{location\_id} $\to$ \texttt{postal\_code} $\to$ \texttt{city} formal eine transitive Abh\"angigkeit und damit einen 3.\,NF-Versto\ss{} bedeuten w\"urde. Da das Schema jedoch international unterschiedliche, teils fehlende (\texttt{NULL}) Postleitzahlen abbildet (z.\,B.\ London, Rom, Hiroshima, Singapur ohne PLZ), gilt diese funktionale Abh\"angigkeit \emph{nicht global} \"uber den gesamten Datenbestand -- sie wird hier daher nicht als Normalform-Versto\ss{} gewertet, sollte in der Diskussion aber als Modellierungs-Trade-off erw\"ahnt werden.
-\item \textbf{\texttt{job.min\_salary}/\texttt{max\_salary}:} Diese Werte sind laut Aufgabenstellung 1.5 aus \texttt{employee.salary} \emph{abgeleitet}. Das ist zwar \emph{innerhalb} der Relation \texttt{job} kein BCNF-Versto\ss{} (der Schl\"ussel \texttt{job\_id} bleibt Determinante), stellt aber eine \emph{relationen\"ubergreifende} Redundanz/Ableitung dar, die bei Geh\"altsanpassungen manuell konsistent gehalten werden muss (klassisches Beispiel f\"ur ``denormalisierte'', abgeleitete Daten au\ss{}erhalb des eigentlichen Normalformen-Konzepts).
-\end{enumerate}
+Alle 9 Relationen: einwertiger PK oder zusammengesetzter PK mit voller Abh\"angigkeit (\texttt{job\_history}: Job/Abteilung h\"angen von Mitarbeiter+Startdatum; \texttt{employee2project}: assoc\_pct/is\_project\_lead h\"angen von Mitarbeiter+Projekt) $\Rightarrow$ \textbf{BCNF}. Sonderf\"alle: (1) \texttt{postal\_code}$\to$\texttt{city} w\"are transitiv/3NF-Versto\ss{}, gilt hier aber nicht global (NULL-PLZ bei London/Rom etc.) $\Rightarrow$ kein Versto\ss{}. (2) \texttt{job.min/max\_salary} sind aus \texttt{employee.salary} abgeleitet -- kein BCNF-Versto\ss{} \emph{innerhalb} \texttt{job}, aber relationen\"ubergreifende Redundanz (manuell konsistent zu halten).
 \end{loesung}
 
 
@@ -590,7 +446,7 @@ Zwei h\"aufig diskutierte Sonderf\"alle sollten dabei aber angesprochen werden:
 Ziel: Im Rahmen dieser \"Ubung sollen die grundlegenden SQL-Befehle f\"ur die Implementierung des HR-Schemas mit Hilfe eines MariaDB-DBS erstellt werden.
 
 \subsection*{4.2 \quad Schema-Erstellung}
-Erstellen Sie die notwendigen SQL-Befehle, um in der Datenbasis ein neues Schema mit dem Namen ``hr'' zu erstellen (Datei \texttt{HR\_setupDB.sql}, beliebig oft ausf\"uhrbar).
+Neues Schema ``hr'' erstellen (Datei \texttt{HR\_setupDB.sql}, beliebig oft ausf\"uhrbar).
 
 \begin{loesung}
 \begin{lstlisting}
@@ -602,7 +458,7 @@ Das \texttt{DROP DATABASE IF EXISTS} stellt sicher, dass das Skript beliebig oft
 \end{loesung}
 
 \subsection*{4.3 \quad Relationen, Attribute und Datentypen}
-Erstellen Sie die notwendigen SQL-Befehle, um innerhalb des ``hr''-Schemas alle Relationen mit den jeweiligen Attributen und Datentypen (inkl.\ Prim\"arschl\"ussel) zu erstellen.
+Alle Relationen mit Attributen/Datentypen/PK im ``hr''-Schema erstellen.
 
 \begin{loesung}
 \begin{lstlisting}
@@ -732,15 +588,11 @@ Erl\"autern Sie die Auswirkungen folgender \"Anderungen am Datenbestand unter Be
 
 \begin{loesung}
 \begin{itemize}
-\item \textbf{Wirkung von \texttt{RESTRICT} bei \texttt{employee(department\_id)}:} Solange mindestens ein Mitarbeiter einer Abteilung zugeordnet ist, verhindert \texttt{RESTRICT} das L\"oschen dieser Abteilung -- die DELETE-Anweisung auf \texttt{department} wird mit einem Fremdschl\"usselfehler abgelehnt. Die Abteilung darf erst gel\"oscht werden, nachdem alle zugeh\"origen Mitarbeiter umgezogen oder entfernt wurden.
-\item \textbf{\texttt{location\_id} einer bestehenden Location wird aktualisiert:} Da \texttt{department.location\_id} mit \texttt{ON UPDATE CASCADE} definiert ist, wird der neue Wert automatisch in allen referenzierenden \texttt{department}-Zeilen \"ubernommen -- die \"Anderung erfolgt transparent, ohne Fehlermeldung.
-\item \textbf{L\"oschen einer Location mit zugeordneten Departments:} Die \texttt{DELETE}-Anweisung wird abgelehnt (Fremdschl\"usselverletzung), da \texttt{location(location\_id)} $\to$ \texttt{department(location\_id)} mit \texttt{ON DELETE RESTRICT} definiert ist. Die Departments m\"ussten zuerst gel\"oscht oder umgezogen werden.
-\item \textbf{L\"oschen eines Mitarbeiters aus der Employee-Relation:}
-  \begin{itemize}
-  \item \emph{Der Mitarbeiter ist Manager:} Solange andere Mitarbeiter ihn \"uber \texttt{manager\_id} referenzieren, verhindert \texttt{RESTRICT} das L\"oschen -- die unterstellten Mitarbeiter m\"ussten zuerst einem anderen Manager zugeordnet werden.
-  \item \emph{Der Mitarbeiter ist kein Manager:} Das L\"oschen ist erlaubt. Da \texttt{job\_history(employee\_id)} und \texttt{employee2project(employee\_id)} mit \texttt{ON DELETE CASCADE} definiert sind, werden dabei automatisch auch alle Besch\"aftigungshistorien- und Projektzuordnungs-Eintr\"age dieses Mitarbeiters mitgel\"oscht.
-  \end{itemize}
-\item \textbf{Alle L\"osch-Optionen w\"aren \texttt{CASCADE}: Was passiert beim L\"oschen einer Region?} Es k\"ame zu einer weitreichenden Kettenreaktion: Region $\to$ alle zugeh\"origen Countries werden gel\"oscht $\to$ deren Locations werden gel\"oscht $\to$ deren Departments werden gel\"oscht $\to$ alle Employees dieser Departments werden gel\"oscht (inkl.\ rekursiv aller ihrer Mitarbeiter \"uber \texttt{manager\_id}) $\to$ deren \texttt{job\_history}- und \texttt{employee2project}-Eintr\"age werden gel\"oscht. Eine einzige \texttt{DELETE}-Anweisung auf einer einzelnen Region k\"onnte damit einen Gro\ss{}teil der Datenbank l\"oschen. Genau deshalb verwendet das vorgegebene Schema bewusst \texttt{RESTRICT} f\"ur die ``strukturellen'' Fremdschl\"ussel der geografischen/organisatorischen Hierarchie (und f\"ur \texttt{manager\_id}) und nur f\"ur die reinen ``Historien-/Detailtabellen'' (\texttt{job\_history}, \texttt{employee2project}) \texttt{CASCADE}.
+\item \texttt{RESTRICT} bei \texttt{employee(department\_id)}: Abteilung mit Mitarbeitern kann nicht gel\"oscht werden (FK-Fehler), bis alle Mitarbeiter umgezogen sind.
+\item \texttt{location\_id} \"andern: \texttt{ON UPDATE CASCADE} $\Rightarrow$ automatisch in \texttt{department} \"ubernommen, kein Fehler.
+\item Location mit Departments l\"oschen: abgelehnt (\texttt{RESTRICT}), Departments m\"ussen zuerst weg.
+\item Mitarbeiter l\"oschen: als \emph{Manager} (referenziert \"uber \texttt{manager\_id}) $\Rightarrow$ \texttt{RESTRICT} verhindert es; als \emph{Nicht-Manager} $\Rightarrow$ erlaubt, \texttt{job\_history}/\texttt{employee2project}-Eintr\"age werden per \texttt{CASCADE} mitgel\"oscht.
+\item Alle L\"osch-Optionen = \texttt{CASCADE}, Region l\"oschen: Kettenreaktion Region$\to$Country$\to$Location$\to$Department$\to$Employee (inkl.\ rekursiv \"uber \texttt{manager\_id})$\to$\texttt{job\_history}/\texttt{employee2project} -- k\"onnte Gro\ss{}teil der DB l\"oschen. Deshalb \texttt{RESTRICT} f\"ur die strukturelle Hierarchie, nur \texttt{CASCADE} f\"ur Historien-/Detailtabellen.
 \end{itemize}
 \end{loesung}
 
@@ -793,50 +645,23 @@ ALTER TABLE location
 Identifizieren Sie weitere sinnvolle Constraints, die \"uber die einfache Pr\"ufung der Attributwerte eines neuen Tupels hinausgehen und z.\,B.\ bereits vorhandene Tupel mit einbeziehen.
 
 \begin{loesung}
-Einfache \texttt{CHECK}-Constraints in MariaDB k\"onnen nur Attribute \emph{derselben} Zeile pr\"ufen -- sie k\"onnen weder andere Zeilen derselben Tabelle noch andere Tabellen einbeziehen. F\"ur zeilen\"ubergreifende bzw.\ tabellen\"ubergreifende Gesch\"aftsregeln werden daher \texttt{TRIGGER} ben\"otigt. Sinnvolle Kandidaten w\"aren u.\,a.:
-
+\texttt{CHECK} pr\"uft nur die eigene Zeile; f\"ur zeilen-/tabellen\"ubergreifende Regeln braucht es \texttt{TRIGGER}. Kandidaten:
 \begin{enumerate}
-\item \textbf{Ein Mitarbeiter darf nicht sein eigener Vorgesetzter sein} -- l\"asst sich noch als einfacher \texttt{CHECK} auf der eigenen Zeile formulieren:
-\begin{lstlisting}
-ALTER TABLE employee
-    ADD CONSTRAINT NotOwnManager CHECK (employee_id <> manager_id);
-\end{lstlisting}
-\item \textbf{Das Gehalt eines Mitarbeiters muss innerhalb des Gehaltsrahmens (\texttt{min\_salary}/\texttt{max\_salary}) seines Jobs liegen} -- ben\"otigt einen Blick in die \texttt{job}-Tabelle:
+\item Mitarbeiter $\ne$ eigener Vorgesetzter -- einfacher \texttt{CHECK}: \texttt{ADD CONSTRAINT NotOwnManager CHECK (employee\_id <> manager\_id)}
+\item Gehalt muss in \texttt{[min\_salary,max\_salary]} des Jobs liegen (\texttt{TRIGGER}, Blick in \texttt{job}):
 \begin{lstlisting}
 DELIMITER $$
-CREATE TRIGGER trg_salary_in_range
-BEFORE INSERT ON employee
-FOR EACH ROW
-BEGIN
-    DECLARE v_min DECIMAL(8,0);
-    DECLARE v_max DECIMAL(8,0);
-    SELECT min_salary, max_salary INTO v_min, v_max
-        FROM job WHERE job_id = NEW.job_id;
-    IF NEW.salary < v_min OR NEW.salary > v_max THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Gehalt liegt ausserhalb des Gehaltsrahmens des Jobs';
-    END IF;
-END$$
-DELIMITER ;
+CREATE TRIGGER trg_salary_in_range BEFORE INSERT ON employee
+FOR EACH ROW BEGIN
+  DECLARE v_min,v_max DECIMAL(8,0);
+  SELECT min_salary,max_salary INTO v_min,v_max FROM job WHERE job_id=NEW.job_id;
+  IF NEW.salary NOT BETWEEN v_min AND v_max THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Gehalt ausserhalb Rahmen';
+  END IF;
+END$$ DELIMITER ;
 \end{lstlisting}
-\item \textbf{Die Summe der \texttt{assoc\_pct}-Werte eines Mitarbeiters darf 1 (100\,\%) nicht \"uberschreiten} -- erfordert eine Aggregation \"uber die bereits vorhandenen Zeilen desselben Mitarbeiters in \texttt{employee2project} (in den Beispieldaten aus Aufgabe 8.4.1 bewusst \emph{nicht} durchgesetzt, um \"uberlastete Mitarbeiter demonstrieren zu k\"onnen):
-\begin{lstlisting}
-DELIMITER $$
-CREATE TRIGGER trg_assoc_pct_sum
-BEFORE INSERT ON employee2project
-FOR EACH ROW
-BEGIN
-    DECLARE v_sum DECIMAL(5,2);
-    SELECT IFNULL(SUM(assoc_pct),0) INTO v_sum
-        FROM employee2project WHERE employee_id = NEW.employee_id;
-    IF v_sum + NEW.assoc_pct > 1 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Mitarbeiter waere zu mehr als 100% zugeordnet';
-    END IF;
-END$$
-DELIMITER ;
-\end{lstlisting}
-\item \textbf{Zeitr\"aume in \texttt{job\_history} d\"urfen sich f\"ur denselben Mitarbeiter nicht \"uberlappen} und \textbf{das \texttt{start\_date} eines Besch\"aftigungsabschnitts darf nicht vor dem \texttt{hire\_date}} des Mitarbeiters liegen -- beides erfordert ebenfalls den Vergleich mit bereits vorhandenen Zeilen (\texttt{job\_history} bzw.\ \texttt{employee}) und w\"urde analog per \texttt{TRIGGER} umgesetzt.
+\item Summe \texttt{assoc\_pct} je Mitarbeiter $\le$ 1 (Aggregation \"uber vorhandene Zeilen; in Aufgabe 8.4.1 bewusst nicht durchgesetzt)
+\item \texttt{job\_history}-Zeitr\"aume je Mitarbeiter d\"urfen sich nicht \"uberlappen; \texttt{start\_date} $\ge$ \texttt{hire\_date} -- analog per \texttt{TRIGGER}
 \end{enumerate}
 \end{loesung}
 
@@ -845,7 +670,7 @@ DELIMITER ;
 \Kopf{Aufgabe 6 Data Manipulation Language}
 
 \subsection*{6.1 \quad Einf\"ugen von Daten}
-Erweitern Sie die bereitgestellte Datei ``Aufgabe6\_Datenbestand.sql'' um geeignete SQL-Statements zum Einf\"ugen von Regionen, den fehlenden L\"andern (Italien, Japan, USA, Kanada, \"Agypten) sowie den folgenden Projektzuordnungen: Julia Dellinger $\to$ Lean Management (70\,\%), Patrick Sully $\to$ US Sales Campaign (100\,\%, Projektleitung), Matthew Weiss $\to$ Europe Sales Campaign (20\,\%).
+Einf\"ugen: Regionen, fehlende L\"ander (Italien, Japan, USA, Kanada, \"Agypten), Projektzuordnungen: Dellinger$\to$Lean Management (70\%), Sully$\to$US Sales Campaign (100\%, Leitung), Weiss$\to$Europe Sales Campaign (20\%).
 
 \begin{loesung}
 Die bereitgestellte Datei enth\"alt bereits Standorte, Abteilungen, Jobs, Mitarbeiter, Besch\"aftigungshistorien und Projekte -- es fehlen lediglich die Regionen, ein Teil der L\"ander sowie die drei neuen Projektzuordnungen:
@@ -922,41 +747,16 @@ Da \texttt{job\_history(employee\_id)} mit \texttt{ON DELETE CASCADE} auf \textt
 Testen Sie die Check-Constraints aus Aufgabe 5, indem Sie jeweils ein \texttt{INSERT}-Statement f\"ur einen g\"ultigen Datensatz und einen Datensatz, der das jeweilige Constraint verletzt, erstellen und ausf\"uhren.
 
 \begin{loesung}
-\begin{lstlisting}
--- MinSalaryPositive: gueltig vs. verletzt
-INSERT INTO job VALUES ('TEST_OK1', 'Testjob', 3000, 6000);   -- OK
-INSERT INTO job VALUES ('TEST_FAIL1', 'Testjob', -100, 6000); -- Fehler: min_salary <= 0
-
--- MaxSalaryGreaterThanMinSalary
-INSERT INTO job VALUES ('TEST_OK2', 'Testjob', 3000, 6000);   -- OK
-INSERT INTO job VALUES ('TEST_FAIL2', 'Testjob', 5000, 3000); -- Fehler: max_salary < min_salary
-
--- SalaryPositive / CommissionPctPositive (employee)
-INSERT INTO employee VALUES (900, 'Test', 'Ok', 'TOK@example.com', '000.000.0000',
-    STR_TO_DATE('01-JAN-2020','%d-%M-%Y'), 'IT_PROG', 4000, 0.1, NULL, 60);  -- OK
-INSERT INTO employee VALUES (901, 'Test', 'Fail', 'TFAIL@example.com', '000.000.0000',
-    STR_TO_DATE('01-JAN-2020','%d-%M-%Y'), 'IT_PROG', -500, 0.1, NULL, 60); -- Fehler: salary <= 0
-
--- EndDateAfterStartDate (job_history)
-INSERT INTO job_history VALUES (100, STR_TO_DATE('01-JAN-2000','%d-%M-%Y'),
-    STR_TO_DATE('01-JAN-2001','%d-%M-%Y'), 'IT_PROG', 60);  -- OK
-INSERT INTO job_history VALUES (100, STR_TO_DATE('01-JAN-2001','%d-%M-%Y'),
-    STR_TO_DATE('01-JAN-2000','%d-%M-%Y'), 'IT_PROG', 60);  -- Fehler: end_date < start_date
-
--- AssocPctRange (employee2project)
-INSERT INTO employee2project VALUES (100, 102, 0.5, FALSE);  -- OK
-INSERT INTO employee2project VALUES (100, 102, 1.5, FALSE);  -- Fehler: assoc_pct > 1
-
--- AtLeastOneDigitInStreetAddress (location)
-INSERT INTO location (street_address, city, country_id) VALUES ('Musterstr. 12', 'Testort', 'DE'); -- OK
-INSERT INTO location (street_address, city, country_id) VALUES ('Musterstrasse ohne Hausnummer', 'Testort', 'DE'); -- Fehler: keine Ziffer
-
--- EMailPattern (employee)
-INSERT INTO employee VALUES (902, 'Test', 'Mail', 'tmail@example.com', '000.000.0000',
-    STR_TO_DATE('01-JAN-2020','%d-%M-%Y'), 'IT_PROG', 4000, NULL, NULL, 60); -- OK
-INSERT INTO employee VALUES (903, 'Test', 'Mail2', 'ungueltige-mail-adresse', '000.000.0000',
-    STR_TO_DATE('01-JAN-2020','%d-%M-%Y'), 'IT_PROG', 4000, NULL, NULL, 60); -- Fehler: kein @-Muster
-\end{lstlisting}
+Testprinzip: je 1 \texttt{INSERT} mit g\"ultigem und 1 mit verletzendem Wert, Rest der Spalten beliebig g\"ultig gef\"ullt.
+\begin{itemize}
+\item \texttt{MinSalaryPositive}: \texttt{min\_salary}=3000 OK / $-$100 Fehler
+\item \texttt{MaxSalaryGreaterThanMinSalary}: (3000,6000) OK / (5000,3000) Fehler
+\item \texttt{SalaryPositive}: \texttt{salary}=4000 OK / $-$500 Fehler
+\item \texttt{EndDateAfterStartDate}: (2000-01-01,2001-01-01) OK / (2001-01-01,2000-01-01) Fehler
+\item \texttt{AssocPctRange}: \texttt{assoc\_pct}=0.5 OK / 1.5 Fehler
+\item \texttt{AtLeastOneDigitInStreetAddress}: `Musterstr. 12' OK / `Musterstrasse ohne Nr' Fehler
+\item \texttt{EMailPattern}: `tmail@example.com' OK / `ungueltige-mail-adresse' Fehler
+\end{itemize}
 \end{loesung}
 
 
@@ -966,7 +766,7 @@ INSERT INTO employee VALUES (903, 'Test', 'Mail2', 'ungueltige-mail-adresse', '0
 Im Rahmen dieser \"Ubung sollen Informationen aus dem \texttt{hr}-Schema ausgegeben werden.
 
 \subsection*{7.1 \quad einfaches SELECT-Statement}
-Erstellen Sie ein \texttt{SELECT}-Statement, um die Namen aller L\"ander auszugeben.
+Namen aller L\"ander ausgeben.
 \begin{loesung}
 \begin{lstlisting}
 SELECT country_name FROM hr.country;
@@ -974,7 +774,7 @@ SELECT country_name FROM hr.country;
 \end{loesung}
 
 \subsection*{7.2 \quad aktuelle Uhrzeit}
-Erstellen Sie ein \texttt{SELECT}-Statement, um die aktuelle Uhrzeit in der Form ``HH:MM'' auszugeben.
+Aktuelle Uhrzeit als ``HH:MM'' ausgeben.
 \begin{loesung}
 \begin{lstlisting}
 SELECT NOW(), DATE_FORMAT(NOW(), '%H:%i') FROM DUAL;
@@ -982,7 +782,7 @@ SELECT NOW(), DATE_FORMAT(NOW(), '%H:%i') FROM DUAL;
 \end{loesung}
 
 \subsection*{7.3 \quad DISTINCT}
-Erstellen Sie ein \texttt{SELECT}-Statement, welches duplikatfrei alle Manager-IDs liefert.
+Duplikatfrei alle Manager-IDs liefern.
 \begin{loesung}
 \begin{lstlisting}
 SELECT DISTINCT manager_id FROM hr.employee WHERE manager_id IS NOT NULL;
@@ -990,7 +790,7 @@ SELECT DISTINCT manager_id FROM hr.employee WHERE manager_id IS NOT NULL;
 \end{loesung}
 
 \subsection*{7.4 \quad String-Operationen}
-Erstellen Sie ein \texttt{SELECT}-Statement, um die Adressinformationen aller Locations auszugeben. Die Spalte ``Stadt'' soll das Format \texttt{<country\_id> - <postal\_code> <city> (<state\_province>)} haben; statt \texttt{NULL} soll ``unbekannt'' ausgegeben werden.
+Adressinfos aller Locations; Spalte ``Stadt'' im Format \texttt{<country\_id> - <postal\_code> <city> (<state\_province>)}, \texttt{NULL}$\to$``unbekannt''.
 \begin{loesung}
 \begin{lstlisting}
 SELECT
@@ -1004,7 +804,7 @@ FROM hr.location;
 \end{loesung}
 
 \subsection*{7.5 \quad Filtern}
-Erstellen Sie ein \texttt{SELECT}-Statement, um alle Informationen des CEO (= Mitarbeiter ohne Vorgesetzten) auszugeben.
+Alle Infos des CEO (= Mitarbeiter ohne Vorgesetzten) ausgeben.
 \begin{loesung}
 \begin{lstlisting}
 SELECT *
@@ -1014,7 +814,7 @@ WHERE manager_id IS NULL;
 \end{loesung}
 
 \subsection*{7.6 \quad Filtern nach mehreren Kriterien}
-Erstellen Sie ein \texttt{SELECT}-Statement, um aus der ``job''-Relation alle Jobbeschreibungen auszugeben, deren Mindestgehalt $>$ 2000 ist und deren Bezeichnung ``Clerk'' enth\"alt.
+\texttt{job}: Jobs mit Mindestgehalt $>$ 2000 und Bezeichnung enth\"alt ``Clerk''.
 \begin{loesung}
 \begin{lstlisting}
 SELECT *
@@ -1024,7 +824,7 @@ WHERE min_salary > 2000 AND LOWER(job_id) LIKE '%clerk%';
 \end{loesung}
 
 \subsection*{7.7 \quad Subqueries}
-Erstellen Sie ein \texttt{SELECT}-Statement, um die vollst\"andigen Informationen aller Mitarbeiter auszugeben, die eine Managerposition innehaben.
+Alle Mitarbeiter mit Managerposition (vollst\"andig).
 \begin{loesung}
 \begin{lstlisting}
 SELECT *
@@ -1036,7 +836,7 @@ WHERE employee_id IN (
 \end{loesung}
 
 \subsection*{7.8 \quad komplexes SQL-Statement}
-Erstellen Sie ein \texttt{SELECT}-Statement zur Ausgabe von Name, E-Mail, Telefon, Einstellungsdatum (inkl.\ auf 1 Stelle gerundeter Betriebszugeh\"origkeit in Jahren zum 01.01.2023), Gehalt (in k\,EUR) und Vorgesetztem (bzw.\ ``niemand'') aller Manager mit Gehalt $>$ 10000, die vor dem 01.01.1996 eingestellt wurden.
+Name, E-Mail, Telefon, Einstellungsdatum (+Betriebszugeh\"origkeit in Jahren zum 01.01.2023, 1 Nachkommastelle), Gehalt (k\,EUR), Vorgesetzter (bzw.\ ``niemand'') aller Manager mit Gehalt $>$10000, eingestellt vor 01.01.1996.
 \begin{loesung}
 Das Ergebnis muss \textbf{exakt} der vorgegebenen Formatierung entsprechen (Gro\ss{}-/Kleinschreibung, Abk\"urzungen, Attributzusammenfassung, \texttt{NULL}-Behandlung):
 \begin{lstlisting}
@@ -1166,7 +966,7 @@ Diese Abfrage liefert bei den Beispieldaten aus Aufgabe 6.1 genau die Zeile \tex
 \Kopf{Aufgabe 9 Mengenoperationen und Views}
 
 \subsection*{9.1 \quad Mengenoperationen}
-Anl\"asslich eines Firmenjubil\"aums soll den drei 1996 oder fr\"uher eingestellten Mitarbeitern mit dem niedrigsten Gehalt \emph{sowie} den drei Mitarbeitern mit dem insgesamt niedrigsten Gehalt (unabh\"angig vom Einstelldatum) ein Bonus gezahlt werden. Erstellen Sie ein SQL-Statement, das diesen -- nach aufsteigendem Gehalt sortierten -- Personenkreis ermittelt.
+Bonus f\"ur: 3 Mitarbeiter mit niedrigstem Gehalt unter den bis 1996 Eingestellten \emph{sowie} 3 Mitarbeiter mit insgesamt niedrigstem Gehalt. Personenkreis nach Gehalt aufsteigend sortiert ermitteln.
 \begin{loesung}
 \begin{lstlisting}
 (SELECT employee_id, first_name, last_name, hire_date, job_id, salary
@@ -1183,7 +983,7 @@ ORDER BY salary ASC;
 \end{loesung}
 
 \subsection*{9.2 \quad Views}
-Erstellen Sie eine View \texttt{employee\_details} mit den Attributen \texttt{employee\_id, job\_id, manager\_id, department\_id, location\_id, country\_id, first\_name, last\_name, salary, commission\_pct, department\_name, job\_title, city, state\_province, country\_name, region\_name}. Fragen Sie anschlie\ss{}end m\"oglichst einfach alle Details \"uber die View ab.
+View \texttt{employee\_details} mit employee\_id, job\_id, manager\_id, department\_id, location\_id, country\_id, first/last\_name, salary, commission\_pct, department\_name, job\_title, city, state\_province, country\_name, region\_name. Danach m\"oglichst einfach abfragen.
 \begin{loesung}
 \begin{lstlisting}
 CREATE OR REPLACE VIEW employee_details AS
