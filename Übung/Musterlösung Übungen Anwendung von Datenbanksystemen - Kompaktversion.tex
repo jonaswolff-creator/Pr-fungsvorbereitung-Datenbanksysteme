@@ -18,7 +18,7 @@
 \usepackage[hidelinks]{hyperref}
 
 % ---------- Kompakt-Layout ----------
-\renewcommand{\normalsize}{\fontsize{5.85}{6.6}\selectfont}
+\renewcommand{\normalsize}{\fontsize{6.1}{6.6}\selectfont}
 \normalsize
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.8pt}
@@ -39,7 +39,7 @@
 \titlespacing{\section}{0pt}{3pt}{1pt}
 \titleformat{\subsection}{\bfseries\fontsize{7}{8}\selectfont}{}{0pt}{}
 \titlespacing{\subsection}{0pt}{2pt}{0.5pt}
-\titleformat{\subsubsection}{\bfseries\itshape\fontsize{5.85}{6.6}\selectfont}{}{0pt}{}
+\titleformat{\subsubsection}{\bfseries\itshape\fontsize{6.1}{6.6}\selectfont}{}{0pt}{}
 \titlespacing{\subsubsection}{0pt}{1.5pt}{0.5pt}
 
 % ---------- L\"osungs-Umgebung (kompakt, ohne Box/Rahmen-Overhead) ----------
@@ -100,15 +100,19 @@
 \section*{Aufgabe 1 \quad Entity Relationship Modell}
 \Kopf{Aufgabe 1 Entity Relationship Modell}
 
-\subsection*{1.2 \& 1.3 \quad Region/Land/Standort/Abteilung/Mitarbeiter}
-Region(ID,Name) $\to$\,1:n\,$\to$ Land(ID,Name) $\to$\,1:n\,$\to$ Standort(ID,Stra\ss{}e,PLZ,Stadt,Bundesland) $\to$\,1:n\,$\to$ Abteilung(ID,Name) $\to$\,1:n\,$\to$ Mitarbeiter(ID,Vorname,Nachname,E-Mail,Telefonnummer,Einstelldatum,Gehalt,Provisionssatz). Mitarbeiter hat rekursive 1:n-Beziehung ``ist Vorgesetzter von'' auf sich selbst.
+\subsection*{1.2--1.6 \quad Vollst\"andiges ER-Modell}
+\begin{itemize}
+\item Region$\to$Land$\to$Standort$\to$Abteilung$\to$Mitarbeiter: je 1:n-Kette
+\item Mitarbeiter: rekursive 1:n ``ist Vorgesetzter von''
+\item Projekt: \textbf{n:m} ``arbeitet mit'' Mitarbeiter (Beziehungsattr.\ Anteil, Projektleitung)
+\item Job: 1:n ``ist angestellt als'' zu Mitarbeiter (Mindest-/Maximalgehalt abgeleitet)
+\item Besch\"aftigungsverlauf: schwacher Entit\"atstyp, je 1:n zu Mitarbeiter/Abteilung/Job (keine Paarkombination eindeutig; PK sp\"ater: Mitarbeiter-ID+Start\_Datum)
+\end{itemize}
 
 \begin{loesung}
-Chen-Notation: Rechteck=Entit\"at, Raute=Beziehung, Ellipse=Attribut (unterstr.=Schl\"ussel, gestrichelt=abgeleitet), Zahlen=Kardinalit\"at.
-
 \begin{center}
-\resizebox{0.72\linewidth}{!}{%
-\begin{tikzpicture}[node distance=1.5cm and 4.0cm]
+\resizebox{0.95\linewidth}{!}{%
+\begin{tikzpicture}[node distance=1.8cm and 4.2cm]
 
 \node[entity] (region) {Region};
 \node[attr, above=of region, xshift=-0.9cm] (r-id) {\pk{ID}};
@@ -122,44 +126,23 @@ Chen-Notation: Rechteck=Entit\"at, Raute=Beziehung, Ellipse=Attribut (unterstr.=
 \draw[kante] (country) -- (c-id);
 \draw[kante] (country) -- (c-name);
 
-\coordinate (mid1) at ($(region)!0.5!(country)$);
-\node[rel] at (mid1) {ist Teil von};
-\draw[kante] (region) -- (mid1);
-\draw[kante] (mid1) -- (country);
-\kard{region}{mid1}{1}
-\kard{country}{mid1}{n}
-
 \node[entity, right=of country] (location) {Standort};
 \node[attr, above=of location, xshift=-2.3cm] (l-id) {\pk{ID}};
 \node[attr, above=of location, xshift=-0.75cm] (l-str) {Stra\ss{}e};
 \node[attr, above=of location, xshift=0.75cm] (l-plz) {PLZ};
 \node[attr, above=of location, xshift=2.3cm] (l-stadt) {Stadt};
-\node[attr, below=of location] (l-bl) {Bundesland};
+\node[attr, below=of location, xshift=-1.4cm] (l-bl) {Bundesland};
 \draw[kante] (location) -- (l-id);
 \draw[kante] (location) -- (l-str);
 \draw[kante] (location) -- (l-plz);
 \draw[kante] (location) -- (l-stadt);
 \draw[kante] (location) -- (l-bl);
 
-\coordinate (mid2) at ($(country)!0.5!(location)$);
-\node[rel] at (mid2) {liegt in};
-\draw[kante] (country) -- (mid2);
-\draw[kante] (mid2) -- (location);
-\kard{country}{mid2}{1}
-\kard{location}{mid2}{n}
-
 \node[entity, right=of location] (dept) {Abteilung};
 \node[attr, above=of dept, xshift=-0.9cm] (d-id) {\pk{ID}};
 \node[attr, above=of dept, xshift=0.9cm] (d-name) {Name};
 \draw[kante] (dept) -- (d-id);
 \draw[kante] (dept) -- (d-name);
-
-\coordinate (mid3) at ($(location)!0.5!(dept)$);
-\node[rel] at (mid3) {ist ange-\\siedelt in};
-\draw[kante] (location) -- (mid3);
-\draw[kante] (mid3) -- (dept);
-\kard{location}{mid3}{1}
-\kard{dept}{mid3}{n}
 
 \node[entity, right=of dept] (emp) {Mitarbeiter};
 \node[attr, above=of emp, xshift=-2.85cm] (e-id) {\pk{ID}};
@@ -172,55 +155,23 @@ Chen-Notation: Rechteck=Entit\"at, Raute=Beziehung, Ellipse=Attribut (unterstr.=
 \node[attr, below=of emp, xshift=2.85cm] (e-prov) {Provisionssatz};
 \foreach \a in {e-id,e-vor,e-nach,e-mail,e-tel,e-dat,e-geh,e-prov}{\draw[kante] (emp) -- (\a);}
 
-\coordinate (midE) at ($(dept)!0.5!(emp)$);
-\node[rel] at (midE) {geh\"ort zu};
-\draw[kante] (dept) -- (midE);
-\draw[kante] (midE) -- (emp);
-\kard{dept}{midE}{1}
-\kard{emp}{midE}{n}
+\coordinate (mid1) at ($(region)!0.5!(country)$); \node[rel] at (mid1) {ist Teil von};
+\draw[kante] (region) -- (mid1); \draw[kante] (mid1) -- (country);
+\kard{region}{mid1}{1} \kard{country}{mid1}{n}
 
-\node[rel, above=3.6cm of emp] (reportsto) {ist Vorge-\\setzter von};
-\draw[kante] (emp.north) to[out=110,in=-90] (reportsto.south west);
-\draw[kante] (reportsto.south east) to[out=-90,in=70] (emp.north);
-\node[kardlabel] at ($(emp.north)+(-0.55,1.1)$) {1 (Vorgesetzter)};
-\node[kardlabel] at ($(emp.north)+(0.75,0.6)$) {n (Mitarbeiter)};
+\coordinate (mid2) at ($(country)!0.5!(location)$); \node[rel] at (mid2) {liegt in};
+\draw[kante] (country) -- (mid2); \draw[kante] (mid2) -- (location);
+\kard{country}{mid2}{1} \kard{location}{mid2}{n}
 
-\end{tikzpicture}}
-\end{center}
-\end{loesung}
+\coordinate (mid3) at ($(location)!0.5!(dept)$); \node[rel] at (mid3) {ist ange-\\siedelt in};
+\draw[kante] (location) -- (mid3); \draw[kante] (mid3) -- (dept);
+\kard{location}{mid3}{1} \kard{dept}{mid3}{n}
 
-\subsection*{1.4--1.6 \quad Projekte, Jobs, Besch\"aftigungsverlauf}
-Projekt(ID,Name) steht in \textbf{n:m}-Beziehung ``arbeitet mit'' zu Mitarbeiter (Beziehungsattribute: Anteil, Projektleitung -- n:m-Beziehungen d\"urfen eigene Attribute tragen). Job(ID,Titel,Mindestgehalt*,Maximalgehalt* [*abgeleitet]) steht in 1:n-Beziehung ``ist angestellt als'' zu Mitarbeiter. Besch\"aftigungsverlauf (Start\_Datum,End\_Datum) ist eigener \emph{schwacher} Entit\"atstyp mit je einer 1:n-Beziehung zu Mitarbeiter/Abteilung/Job (da keine Paarkombination die Eintr\"age eindeutig identifiziert; PK sp\"ater: Mitarbeiter-ID+Start\_Datum).
-
-\begin{loesung}
-Vollst\"andiges ER-Modell (Basis f\"ur Aufgabe 2). Attribute von Region/Land/Standort/Abteilung/Mitarbeiter siehe Diagramm oben.
-
-\begin{center}
-\resizebox{0.72\linewidth}{!}{%
-\begin{tikzpicture}[node distance=1.8cm and 4.2cm]
-
-\node[entity] (region) {Region};
-\node[entity, right=of region] (country) {Land};
-\node[entity, right=of country] (location) {Standort};
-\node[entity, right=of location] (dept) {Abteilung};
-\node[entity, right=of dept] (emp) {Mitarbeiter};
 \node[entity, right=of emp] (proj) {Projekt};
 \node[attr, above=of proj, xshift=-0.75cm] (p-id) {\pk{ID}};
 \node[attr, above=of proj, xshift=0.75cm] (p-name) {Name};
 \draw[kante] (proj) -- (p-id);
 \draw[kante] (proj) -- (p-name);
-
-\coordinate (m1) at ($(region)!0.5!(country)$); \node[rel] at (m1) {ist Teil von};
-\draw[kante] (region) -- (m1); \draw[kante] (m1) -- (country);
-\kard{region}{m1}{1} \kard{country}{m1}{n}
-
-\coordinate (m2) at ($(country)!0.5!(location)$); \node[rel] at (m2) {liegt in};
-\draw[kante] (country) -- (m2); \draw[kante] (m2) -- (location);
-\kard{country}{m2}{1} \kard{location}{m2}{n}
-
-\coordinate (m3) at ($(location)!0.5!(dept)$); \node[rel] at (m3) {ist ange-\\siedelt in};
-\draw[kante] (location) -- (m3); \draw[kante] (m3) -- (dept);
-\kard{location}{m3}{1} \kard{dept}{m3}{n}
 
 \coordinate (m4) at ($(dept)!0.5!(emp)$); \node[rel] at (m4) {geh\"ort zu};
 \draw[kante] (dept) -- (m4); \draw[kante] (m4) -- (emp);
